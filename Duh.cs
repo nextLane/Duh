@@ -38,8 +38,8 @@ namespace Duh {
 
             }
 
-            var answer = Trie.GetAutocompleteSuggestions(input).FirstOrDefault();
-            SendKeys.SendWait("Whats up dude, hey jude");
+            var answer = Trie.GetClosestCommands(input);
+            SendKeys.SendWait(answer);
         }
     }
 
@@ -49,6 +49,7 @@ namespace Duh {
             int ignoreLineCount = 2;
             var assembly = Assembly.GetExecutingAssembly();
             var stdGitCommandsFile = "GitCommonStdCommands.txt";
+            //TODO: Generate this CommandHistory file at the time of loading...
             var commandHistoryFile = "CommandHistory.csv";
             var resourcePrefix = "Duh.Resources.";
 
@@ -60,6 +61,8 @@ namespace Duh {
                     trieDictionary.Add(val);
                 }
             }
+
+            var freqCommands = new Dictionary<string, int> ();
             using (Stream stream = assembly.GetManifestResourceStream(string.Concat(resourcePrefix, commandHistoryFile)))
             using (StreamReader reader = new StreamReader(stream)) {
                 while (reader.Peek() != -1) {
@@ -69,12 +72,24 @@ namespace Duh {
                         continue;
                     }
                     var val = reader.ReadLine().Split(',')[1].Replace("\"", "");
-                    trieDictionary.Add(val);
+                    int freq = 1;
+                    if(freqCommands.TryGetValue(val, out freq)) {
+                        freqCommands[val] = freq + 1;
+                    }
+                    else {
+                        freqCommands.Add(val, 1);
+                    }
+
+                   
                 }
+               
             }
-
-            Trie.LoadTrie(trieDictionary);
-
+            var commandsToBeAdded = freqCommands.Where(x => x.Value > 1).Select(x => x.Key);
+            var trieWords = trieDictionary.ToList<string>().Concat(commandsToBeAdded.ToList<string>());
+            Trie.LoadTrie(trieWords);
+            var list = new List<Node>();
+            list.Add(Trie._root);
+            Trie.PrintTrie(list);
         }
     }
 }

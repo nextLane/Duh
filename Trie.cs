@@ -16,6 +16,7 @@ namespace Duh {
         public static void LoadTrie(IEnumerable words) {
             var character = new char();
             foreach (string word in words) {
+                word.Trim();
                 var charArray = word.ToCharArray();
                 var node = _root;
                 for (var index = 0; index < charArray.Length; index++) {
@@ -113,15 +114,63 @@ namespace Duh {
             }
 
 
-            return TraverseAllWords(node, new List<string>());
+            return FindAllAutocompletePhrases(node, new List<string>());
         }
 
-        public static IEnumerable<string> TraverseAllWords(Node node, List<string> completions) {
+
+        public static string GetClosestCommands(string _input) {
+            var results = Enumerable.Empty<string>();
+            var node = _root;
+            shortestEd = int.MaxValue;
+            input = _input;
+
+            //preparing the first row
+            var length = input.Length;
+            var firstRow = new int[length+1];
+            for(int index = 0; index <=length; index++) {
+                firstRow[index] = index;
+            }
+
+            RecursiveCalcOfEditDistance(node, firstRow);
+            if (!closestPhrases.Any())
+                closestPhrases.Add("Nada");
+            return closestPhrases.ToList<string>().ElementAt(0);
+        }
+
+        //Change from static
+        static HashSet<string> closestPhrases = new HashSet<string>();
+        static int shortestEd = int.MaxValue;
+        static string input;
+        public static void RecursiveCalcOfEditDistance(Node node, int[] upperRow) {
+            if (!node.LinkedNodes.Any())
+                return ;
+            foreach (var character in node.LinkedNodes.Keys) {
+                Node child;
+                node.LinkedNodes.TryGetValue(character, out child);
+                upperRow = CalculateNextRow(input, upperRow, character);
+                if (child.IsTerminal) {
+                    int editDist = GetEditDistance(upperRow);
+                    if (editDist  == shortestEd) closestPhrases.Add(child.Value);
+                    else if(editDist < shortestEd) {
+                        shortestEd = editDist;
+                        closestPhrases = new HashSet<string>();
+                        closestPhrases.Add(child.Value);
+                    }
+                }
+
+                RecursiveCalcOfEditDistance(child, upperRow);
+            }
+            return;
+        }
+
+
+
+        public static IEnumerable<string> FindAllAutocompletePhrases(Node node, List<string> completions) {
             if (!node.LinkedNodes.Any())
                 return Enumerable.Empty<string>();
             foreach (Node child in node.LinkedNodes.Values) {
                 if (child.IsTerminal) completions.Add(child.Value);
-                completions.Concat(TraverseAllWords(child, completions));
+                completions.Concat(FindAllAutocompletePhrases(child, completions));
             }
             return completions;
         }
@@ -132,8 +181,9 @@ namespace Duh {
                 return;
 
             foreach (var node in nodes) {
-                var complete = node.IsTerminal ? "#" : " ";
-                Console.Write("'" + node.Value + "'" + complete + " ");
+                if (node.IsTerminal) {
+                    Console.Write("'" + node.Value + "'\n" );
+                }
                 foreach (var childNode in node.LinkedNodes.Values) {
                     childNodes.Add(childNode);
                 }
@@ -144,6 +194,7 @@ namespace Duh {
         }
 
         public static bool AddWord(string newWord) {
+            //to be implemented
             return false;
         }
 
