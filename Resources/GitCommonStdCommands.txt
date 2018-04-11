@@ -1,0 +1,35 @@
+git remote
+git remote -v
+git remote add <name> <url>
+git remote rm <name>
+git remote rename <old-name> <new-name>
+git fetch <remote>
+git fetch <remote> <branch>
+git fetch origin
+git checkout master
+git log origin/master
+git merge origin/master
+git pull <remote>
+git pull --rebase <remote>
+git push <remote> <branch>
+git push <remote> --force
+git branch <branch>
+git branch -d <branch>
+git checkout -b <new-branch>
+git merge <branch>
+git add <some-file>
+git rebase --continue
+git rebase --abort
+git checkout -b <branch>
+git status
+git push -u origin <branch>
+git pull
+git push
+git checkout develop
+git remote add upstream <repo>
+git pull upstream master
+git commit -m "<message>"
+git init
+git clone <repo>
+git clone -branch <tag> <repo>
+git config --global user.email "<email>"
