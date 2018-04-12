@@ -8,7 +8,6 @@ using System.Reflection;
 namespace Duh {
     static class Trie {
         public static Node _root { get; }
-        static HashSet<string> trieDictionary ;
         static Trie() {
             _root = new Node(null);
         }
@@ -72,7 +71,7 @@ namespace Duh {
 
         public static int[] CalculateNextRow(string inputStr, int[] upperRow, char c) {
             var left = upperRow[0] + 1;
-            var top = 0;
+            int top ;
             var diagonal = upperRow[0];
 
             int[] resultRow = new int[upperRow.Length];
@@ -119,9 +118,9 @@ namespace Duh {
 
 
         public static string GetClosestCommands(string _input) {
-            var results = Enumerable.Empty<string>();
+            closestPhrases = new HashSet<string>();
+            shortestEd = maxEditDistanceThreshold;
             var node = _root;
-            shortestEd = int.MaxValue;
             input = _input;
 
             //preparing the first row
@@ -137,19 +136,23 @@ namespace Duh {
             return closestPhrases.ToList<string>().ElementAt(0);
         }
 
-        //Change from static
+        //Change from staticgit log
         static HashSet<string> closestPhrases = new HashSet<string>();
-        static int shortestEd = int.MaxValue;
+        static int shortestEd;
         static string input;
+        const int maxEditDistanceThreshold = 20;
+
         public static void RecursiveCalcOfEditDistance(Node node, int[] upperRow) {
             if (!node.LinkedNodes.Any())
                 return ;
             foreach (var character in node.LinkedNodes.Keys) {
                 Node child;
                 node.LinkedNodes.TryGetValue(character, out child);
-                upperRow = CalculateNextRow(input, upperRow, character);
+                var nextRow = CalculateNextRow(input, upperRow, character);
+                //Console.WriteLine(child.Value + ":" + character + "::" + getString(upperRow) + "***\n" + getString(nextRow) + "\n");
                 if (child.IsTerminal) {
-                    int editDist = GetEditDistance(upperRow);
+                    int editDist = GetEditDistance(nextRow);
+                    //Console.WriteLine(child.Value + ":" + editDist + " , sd=" + shortestEd);
                     if (editDist  == shortestEd) closestPhrases.Add(child.Value);
                     else if(editDist < shortestEd) {
                         shortestEd = editDist;
@@ -158,11 +161,19 @@ namespace Duh {
                     }
                 }
 
-                RecursiveCalcOfEditDistance(child, upperRow);
+                RecursiveCalcOfEditDistance(child, nextRow);
             }
             return;
         }
 
+        public static string getString(int [] arr) {
+            string v = "[";
+            foreach (var a in arr)
+                v = v+ a + ",";
+            v += "]";
+
+            return v;
+        }
 
 
         public static IEnumerable<string> FindAllAutocompletePhrases(Node node, List<string> completions) {
