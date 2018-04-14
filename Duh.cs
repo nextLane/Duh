@@ -29,7 +29,7 @@ namespace Duh {
             string input;
             IEnumerable<PSObject> res;
             //var history = PowerShell.Create().AddCommand("get-history").Invoke();
-            WriteObject("Lets get auto-complete suggestions");
+            //WriteObject("Lets get auto-complete suggestions");
             using (PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace)) {
                 res = ps.AddCommand("Get-History")
                         .AddParameter("Count", 1)
