@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Duh {
     static class Trie {
@@ -32,40 +30,7 @@ namespace Duh {
                 node.IsTerminal = true;
             }
         }
-
-
-        /* Cases: (1) Missing letters: first letters missing, for every letter, if not found in the 
-             * immediate linked nodes try two subsequent nodes. Must end with terminal node, might match termial true
-             * (2) Extra letters: might not match terminal true
-             * 
-             * 
-             * */
-        //public IEnumerable<string> FindClosestMatch(string word) {
-        //    var k = 1; // number of missing or extra letters allowed including start/mid
-        //    var letters = word.ToCharArray();
-        //    var result = Enumerable.Empty<string>();
-        //    int mlF = 0; //missing letter flag
-        //    int elF = 0; //extra letter flag
-
-        //    var candidate_nodes = new List<Node>();
-        //    candidate_nodes = _root.LinkedNodes.Values.ToList() ;
-
-        //    foreach(var letter in letters) {
-        //        if (node.LinkedNodes.ContainsKey(letter)){
-        //            node.LinkedNodes.TryGetValue(letter, out node);
-        //        }
-        //        else {
-        //            jumpFlag++;
-        //            if(jumpFlag <=k) {
-        //                //check the letter in candidate nodes
-
-        //            }
-        //        }
-        //    }
-
-        //}
-
-
+        
         //Levenshtein distance
         //http://people.cs.pitt.edu/~kirk/cs1501/Pruhs/Spring2006/assignments/editdistance/Levenshtein%20Distance.htm
 
@@ -97,7 +62,6 @@ namespace Duh {
                 node.LinkedNodes.TryGetValue(letter, out node);
             }
 
-
             if (node.IsTerminal) return true;
             return false;
         }
@@ -112,10 +76,8 @@ namespace Duh {
                 node.LinkedNodes.TryGetValue(letter, out node);
             }
 
-
             return FindAllAutocompletePhrases(node, new List<string>());
         }
-
 
         public static string GetClosestCommands(string _input) {
             closestPhrases = new HashSet<string>();
@@ -136,7 +98,6 @@ namespace Duh {
             return closestPhrases.ToList<string>().ElementAt(0);
         }
 
-        //Change from staticgit log
         static HashSet<string> closestPhrases = new HashSet<string>();
         static int shortestEd;
         static string input;
@@ -149,7 +110,7 @@ namespace Duh {
                 Node child;
                 node.LinkedNodes.TryGetValue(character, out child);
                 var nextRow = CalculateNextRow(input, upperRow, character);
-                //Console.WriteLine(child.Value + ":" + character + "::" + getString(upperRow) + "***\n" + getString(nextRow) + "\n");
+                //Console.WriteLine(child.Value + ":" + character + "::" + GetString(upperRow) + "***\n" + GetString(nextRow) + "\n");
                 if (child.IsTerminal) {
                     int editDist = GetEditDistance(nextRow);
                     //Console.WriteLine(child.Value + ":" + editDist + " , sd=" + shortestEd);
@@ -166,7 +127,7 @@ namespace Duh {
             return;
         }
 
-        public static string getString(int [] arr) {
+        public static string GetString(int [] arr) {
             string v = "[";
             foreach (var a in arr)
                 v = v+ a + ",";

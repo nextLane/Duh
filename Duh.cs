@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -13,23 +10,9 @@ namespace Duh {
 
     [Cmdlet(VerbsCommon.Get, "duh")]
     public class Duh : Cmdlet {
-        // Declare the parameters for the cmdlet.
-        //[Parameter(Mandatory = true)]
-        //public string InputCommand {
-        //    get { return input_command; }
-        //    set { input_command = value; }
-        //}
-        //private string input_command;
-
-        // Overide the ProcessRecord method to process
-        // the supplied user name and write out a 
-        // greeting to the user by calling the WriteObject
-        // method.
         protected override void ProcessRecord() {
             string input;
             IEnumerable<PSObject> res;
-            //var history = PowerShell.Create().AddCommand("get-history").Invoke();
-            //WriteObject("Lets get auto-complete suggestions");
             using (PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace)) {
                 res = ps.AddCommand("Get-History")
                         .AddParameter("Count", 1)
@@ -46,18 +29,6 @@ namespace Duh {
 
     [Cmdlet(VerbsCommon.Set,"Duh")]
     public class SetDuh : Cmdlet {
-        // Declare the parameters for the cmdlet.
-        //[Parameter(Mandatory = true)]
-        //public string InputCommand {
-        //    get { return input_command; }
-        //    set { input_command = value; }
-        //}
-        //private string input_command;
-
-        // Overide the ProcessRecord method to process
-        // the supplied user name and write out a 
-        // greeting to the user by calling the WriteObject
-        // method.
         protected override void ProcessRecord() {
 
             Trie.LoadTrie(PowershellHelperClass.GetFrequentHistoryCommands());
@@ -89,10 +60,7 @@ namespace Duh {
             Trie.LoadTrie(trieWords);
             var list = new List<Node>();
             list.Add(Trie._root);
-            //Trie.PrintTrie(list);
         }
-
-        
     }
 
     public class PowershellHelperClass {
