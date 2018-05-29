@@ -37,10 +37,11 @@ namespace Duh {
             IEnumerable<string> possibleAnswers = Trie.GetClosestCommands(input);
    
 
-            if(repeatFrequency > possibleAnswers.Count()) {
+            if(repeatFrequency >= possibleAnswers.Count()) {
                 SendKeys.SendWait("No results found");
-            }   
-
+                return;
+            }
+            
             SendKeys.SendWait(possibleAnswers.ToList<string>().ElementAt(repeatFrequency));
 
 
