@@ -34,7 +34,7 @@ namespace Duh {
             Trie.LoadTrie(PowershellHelperClass.GetFrequentHistoryCommands());
             var list = new List<Node>();
             list.Add(Trie._root);
-            Trie.PrintTrie(list);
+            //Trie.PrintTrie(list);
         }
     }
 
