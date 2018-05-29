@@ -104,7 +104,7 @@ namespace Duh {
             }
             return completions;
         }
-        public static string GetClosestCommands(string _input) {
+        public static IEnumerable<string> GetClosestCommands(string _input) {
             closestPhrases = new HashSet<string>();
             shortestEd = maxEditDistanceThreshold;
             var node = _root;
@@ -120,7 +120,7 @@ namespace Duh {
             RecursiveCalcOfEditDistance(node, firstRow);
             if (!closestPhrases.Any())
                 closestPhrases.Add("Nada");
-            return closestPhrases.ToList<string>().ElementAt(0);
+            return closestPhrases.ToList<string>();
         }
 
         static HashSet<string> closestPhrases = new HashSet<string>();

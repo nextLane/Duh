@@ -10,19 +10,45 @@ namespace Duh {
 
     [Cmdlet(VerbsCommon.Get, "duh")]
     public class Duh : Cmdlet {
+
+        static string[] possibleAnswers = new string[] { };
         protected override void ProcessRecord() {
+            int repeatFrequency = 0;
             string input;
             IEnumerable<PSObject> res;
+            int lastIndex = 0;
+           // int commandIndex = 1;
             using (PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace)) {
                 res = ps.AddCommand("Get-History")
-                        .AddParameter("Count", 1)
+                        //.AddParameter("Count", commandIndex)
                         .Invoke();
-                input = res.FirstOrDefault().Properties.ElementAt(1).Value.ToString();
+                lastIndex = res.Count() - 1;
+                input = res.ElementAt(lastIndex).Properties.ElementAt(1).Value.ToString();
+                // check already executed duh
 
+
+                while(input == "duh") {
+                    //add a condition to quit after 3 checks
+                    repeatFrequency++;
+                    lastIndex--;
+                    if (lastIndex < 0)
+                        break;
+                    input = res.ElementAt(lastIndex).Properties.ElementAt(1).Value.ToString();
+                    
+                }
             }
 
-            var answer = Trie.GetClosestCommands(input);
-            SendKeys.SendWait(answer);
+            //This can be statically saved to avoid re-calculating and optimize
+            IEnumerable<string> possibleAnswers = Trie.GetClosestCommands(input);
+   
+
+            if(repeatFrequency > possibleAnswers.Count()) {
+                SendKeys.SendWait("No results found");
+            }   
+
+            SendKeys.SendWait(possibleAnswers.ToList<string>().ElementAt(repeatFrequency));
+
+
         }
     }
 
