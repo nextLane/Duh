@@ -17,15 +17,11 @@ namespace Duh {
             string input;
             IEnumerable<PSObject> res;
             int lastIndex = 0;
-           // int commandIndex = 1;
             using (PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace)) {
                 res = ps.AddCommand("Get-History")
-                        //.AddParameter("Count", commandIndex)
                         .Invoke();
                 lastIndex = res.Count() - 1;
                 input = res.ElementAt(lastIndex).Properties.ElementAt(1).Value.ToString();
-                // check already executed duh
-
 
                 while(input == "duh") {
                     //add a condition to quit after 3 checks
@@ -34,7 +30,6 @@ namespace Duh {
                     if (lastIndex < 0)
                         break;
                     input = res.ElementAt(lastIndex).Properties.ElementAt(1).Value.ToString();
-                    
                 }
             }
 
@@ -60,7 +55,6 @@ namespace Duh {
             Trie.LoadTrie(PowershellHelperClass.GetFrequentHistoryCommands());
             var list = new List<Node>();
             list.Add(Trie._root);
-            //Trie.PrintTrie(list);
         }
     }
 
